@@ -1,23 +1,28 @@
 ##basic usage
 
-`document.addEventListener('DOMContentLoaded', function() {
+```html
+document.addEventListener('DOMContentLoaded', function() {
   var test = new HorizontalScroll({ speed: 2, moveInOut: false });
-})`
+})
+```
 
 ##options
 
-`{
+```html
+{
   outerContainer: '.horizontal-scroll-height-container',
   innerContainer: '.horizontal-scroll-container',
   wrapper: '.horizontal-scroll-wrapper',
   item: '.horizontal-item',
   speed: 1,
   moveInOut: true, // boolean
-};`
+};
+```
 
 ##required html markup
 
-`<!-- example -->
+```html
+<!-- example -->
 <div class="horizontal-scroll-height-container">
   <div class="horizontal-scroll-container">
     <div class="horizontal-scroll-wrapper">
@@ -33,4 +38,5 @@
     </div>
   </div>
 </div>
-<!-- example end -->`
+<!-- example end -->
+```
