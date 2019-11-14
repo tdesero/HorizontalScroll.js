@@ -1,4 +1,4 @@
-##basic usage
+## basic usage
 
 ```html
 document.addEventListener('DOMContentLoaded', function() {
@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', function() {
 })
 ```
 
-##options
+## options
 
 ```html
 {
@@ -19,7 +19,7 @@ document.addEventListener('DOMContentLoaded', function() {
 };
 ```
 
-##required html markup
+## required html markup
 
 ```html
 <!-- example -->
