@@ -1,4 +1,4 @@
-## basic usage
+## Basic usage
 
 ```html
 document.addEventListener('DOMContentLoaded', function() {
@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', function() {
 })
 ```
 
-## options
+## Options
 
 ```html
 {
@@ -19,7 +19,7 @@ document.addEventListener('DOMContentLoaded', function() {
 };
 ```
 
-## required html markup
+## Required html markup
 
 ```html
 <!-- example -->
@@ -40,3 +40,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 <!-- example end -->
 ```
+
+## Website
+
+https://tdesero.github.io/HorizontalScroll.js/
