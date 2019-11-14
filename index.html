@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>Horizontal Scroll</title>
+  <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css'><link rel="stylesheet" href="./style.css">
+
+</head>
+<body>
+<!-- partial:index.partial.html -->
+<div class="vertical-item">
+  <span>Vertical Item 1</span>
+</div>
+<div class="vertical-item">
+  <span>Vertical Item 2</span>
+</div>
+<div class="vertical-item">
+  <span>Vertical Item 3</span>
+</div>
+
+<!-- example -->
+<div class="horizontal-scroll-height-container" data-sticky-container>
+  <div class="horizontal-scroll-container">
+    <div class="horizontal-scroll-wrapper">
+      <div class="horizontal-item">
+        <span>Horizontal Item 1</span>
+      </div>
+      <div class="horizontal-item">
+        <span>Horizontal Item 2</span>
+      </div>
+      <div class="horizontal-item">
+        <span>Horizontal Item 3</span>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- example end -->
+
+<div class="vertical-item">
+  <span>Vertical Item 4</span>
+</div>
+<div class="vertical-item">
+  <span>Vertical Item 5</span>
+</div>
+<div class="vertical-item">
+  <span>Vertical Item 6</span>
+</div>
+
+<!-- example 2 -->
+<div class="horizontal-scroll-height-container" data-sticky-container>
+  <div class="horizontal-scroll-container">
+    <div class="horizontal-scroll-wrapper">
+      <div class="horizontal-item">
+        <span class="really-big-font">Wow! I really like this.</span>
+      </div>
+    </div>
+  </div>
+</div>
+<!--example 2 end -->
+
+<div class="vertical-item">
+  <span>Vertical Item 7</span>
+</div>
+<div class="vertical-item">
+  <span>Vertical Item 8</span>
+</div>
+<div class="vertical-item">
+  <span>Vertical Item 9</span>
+</div>
+<!-- partial -->
+  <script  src="./lib/HorizontalScroll.js"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      var test = new HorizontalScroll({ speed: 2, moveInOut: false });
+    })
+  </script>
+
+</body>
+</html>

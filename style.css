@@ -1,0 +1,56 @@
+html {
+  font-size: 40px;
+  font-family: sans-serif;
+}
+
+span {
+  padding: 2rem;
+  display: block;
+}
+
+.vertical-item, .horizontal-item {
+  box-sizing: border-box;
+  height: 100vh;
+  //border: 2px solid black;
+}
+
+.vertical-item {
+  color: #FFF;
+  background-color: black;
+  width: 100%;
+}
+
+.vertical-item:nth-child(2n), .horizontal-item:nth-child(2n) {
+  background-color: grey;
+}
+
+.horizontal-item {
+  color: #FFF;
+  background-color: blue;
+  min-width: 100vw;
+  float: left;
+}
+
+/* not sure to use sticky here because it works badly in ms edge */
+.horizontal-scroll-container {
+  //position: sticky;
+  //top: 0;
+  overflow-x: hidden;
+  background-color: red;
+}
+
+.horizontal-scroll-wrapper {
+  will-change: transform;
+}
+
+.horizontal-scroll-wrapper::after {
+  content: "";
+  display: block;
+  float: none;
+  clear: both;
+}
+
+.really-big-font {
+  font-size: 50vh;
+  white-space: nowrap;
+}
