@@ -11,6 +11,9 @@ class HorizontalScroll {
       item: '.horizontal-item',
       speed: 1,
       moveInOut: true, // boolean
+      setHeight: true,
+      offsetLeft: 0,
+      offsetTop: 0,
     };
 
     this.options = Object.assign({}, this.defaults, options);
@@ -27,6 +30,7 @@ class HorizontalScroll {
     this.offsets = [];
     this.windowHeight = window.innerHeight || document.documentElement.clientHeight;
     this.windowWidth = window.innerWidth || document.documentElement.clientWidth;
+    this.lastItemHeights = [];
 
     //sticky
     this.isSticky = [];
@@ -77,12 +81,22 @@ class HorizontalScroll {
       //atm it probably need some normalize.css to erase all margins etc...
       for (let j = 0; j < this.items[i].length; j++) {
         this.wrapperWidths[i] += this.items[i][j].offsetWidth;
+
+        //last items height
+        if (j === this.items[i].length - 1) {
+          this.lastItemHeights[i] = this.items[i][j].offsetHeight;
+        }
       }
 
-      this.outerHeights[i] =
-          (this.wrapperWidths[i] - this.windowWidth) / this.options.speed + this.windowHeight;
-
       this.wrappers[i].style.width = this.wrapperWidths[i] + 'px';
+      if (this.options.setHeight) {
+        this.outerHeights[i] =
+            (this.wrapperWidths[i] - this.windowWidth) /
+            Math.abs(this.options.speed) + this.lastItemHeights[i] + this.options.offsetTop;
+      } else {
+        this.outerHeights[i] = this.outerContainers[i].offsetHeight;
+      }
+
       this.outerContainers[i].style.height = this.outerHeights[i] + 'px';
       this.outerContainers[i].style.position = 'relative'; //position has to be set relative
 
@@ -96,6 +110,11 @@ class HorizontalScroll {
       }
 
     }
+  }
+
+  refresh(options) {
+    this.options = Object.assign({}, this.options, options);
+    this.updateSizes();
   }
 
   getOffsetTop(element) {
@@ -113,7 +132,7 @@ class HorizontalScroll {
 
     for (let i = 0; i < this.wrappers.length; i++) {
       let top = this.offsets[i] - this.scrollY;
-      let shouldStick = top < 0 && (-1 * top) < this.outerHeights[i] - this.windowHeight;
+      let shouldStick = top < this.options.offsetTop && (-1 * top) < this.outerHeights[i] - this.lastItemHeights[i] - this.options.offsetTop;
 
       //transform value either not limited or with limits. see this.options.moveInOut
       let transform = this.options.moveInOut ?
@@ -123,14 +142,14 @@ class HorizontalScroll {
             (this.wrapperWidths[i] - this.windowWidth) * -1), 0);
 
       if (top < this.windowHeight && (-1 * top) < this.outerHeights[i]) {
-        this.wrappers[i].style.transform = 'translate3D(' + transform + 'px, 0, 0)';
+        this.wrappers[i].style.transform = 'translate3D(' + (transform + this.options.offsetLeft) + 'px, 0, 0)';
       }
 
       if (!this.isSticky[i] && shouldStick) {
         this.makeSticky(i);
         this.isSticky[i] = true;
       } else if (this.isSticky[i] && !shouldStick) {
-        if (top < 0) {
+        if (top < this.options.offsetTop) {
           this.dropStickyBottom(i);
         } else {
           this.dropStickyTop(i);
@@ -142,7 +161,7 @@ class HorizontalScroll {
 
   makeSticky(i) {
     this.innerContainers[i].style.position = 'fixed';
-    this.innerContainers[i].style.top = 0;
+    this.innerContainers[i].style.top = this.options.offsetTop + 'px';
     this.innerContainers[i].style.bottom = ''; // erase value
     this.innerContainers[i].style.width = '100%';
   }

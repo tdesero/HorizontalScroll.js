@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>Horizontal Scroll</title>
+  <style>
+    html {
+      font-size: 40px;
+      font-family: sans-serif;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+    }
+
+    span {
+      padding: 2rem;
+      display: block;
+    }
+
+    .vertical-item, .horizontal-item {
+      box-sizing: border-box;
+      height: auto;
+    }
+
+    .vertical-item {
+      color: #FFF;
+      background-color: black;
+      width: 100%;
+    }
+
+    .horizontal-item:nth-child(2n) {
+      background-color: grey;
+    }
+
+    .horizontal-item {
+      color: #FFF;
+      background-color: blue;
+      min-width: 100vw;
+      float: left;
+    }
+
+    .horizontal-scroll-container {
+      overflow-x: hidden;
+    }
+
+    .horizontal-scroll-wrapper {
+      will-change: transform;
+    }
+
+/*
+    .horizontal-scroll-wrapper::after {
+      content: "";
+      display: block;
+      float: none;
+      clear: both;
+    }*/
+
+    .really-big-font {
+      font-size: 50vh;
+      white-space: nowrap;
+    }
+
+  </style>
+
+</head>
+<body>
+<!-- partial:index.partial.html -->
+<div class="vertical-item">
+  <span>HorizontalScroll.js is a tiny micro library to move elements horizontally while scrolling.</span>
+  <span>
+    <code>
+      new HorizontalScroll();
+    </code>
+  </span>
+  <span>
+    <a href="https://github.com/tdesero/HorizontalScroll.js">Github</a>
+  </span>
+</div>
+
+<!-- example -->
+<div class="horizontal-scroll-height-container">
+  <div class="horizontal-scroll-container">
+    <div class="horizontal-scroll-wrapper">
+      <div class="horizontal-item">
+        <span>oh!</span>
+      </div>
+      <div class="horizontal-item">
+        <span>what</span>
+      </div>
+      <div class="horizontal-item">
+        <span>a nice</span>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- example end -->
+
+<div class="vertical-item">
+  <span>effect</span>
+</div>
+
+<!-- example 2 -->
+<div class="horizontal-scroll-height-container">
+  <div class="horizontal-scroll-container">
+    <div class="horizontal-scroll-wrapper">
+      <div class="horizontal-item">
+        <span class="really-big-font">This is absolutely my kind of</span>
+      </div>
+    </div>
+  </div>
+</div>
+<!--example 2 end -->
+
+<div class="vertical-item">
+  <span>scroll experience.</span>
+</div>
+
+  <script  src="./lib/HorizontalScroll.js"></script>
+
+  <script>
+    window.addEventListener('load', function() {
+      var horizontalScroll = new HorizontalScroll({ speed: 2, moveInOut: false, setHeight: true, offsetTop: 100 });
+
+      window.addEventListener('resize', function() {
+        if (window.innerWidth < 600) {
+          horizontalScroll.refresh({offsetTop: 0});
+        }
+      })
+    })
+
+
+  </script>
+
+</body>
+</html>
