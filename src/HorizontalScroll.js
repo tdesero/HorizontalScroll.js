@@ -31,6 +31,9 @@ class HorizontalScroll {
     //sticky
     this.isSticky = [];
 
+    //scrolling
+    this.scrollY = (window.scrollY || window.pageYOffset);
+
     //bindings
     this.handleScroll = this.handleScroll.bind(this);
     this.updateSizes = this.updateSizes.bind(this);
@@ -41,26 +44,22 @@ class HorizontalScroll {
   }
 
   start() {
-    //had to wrap scrollY in a function because otherwise scrollY would be 0
-    //if the document is at about 11000+ pixels scrollY at window load.
-    //seems that it hasn't the right value at this point.
-    //but later when used in the loop it is right. super strange.
-    let scrollY = () => (window.scrollY || window.pageYOffset);
-
+    //wait to get size to get scrollY correctly. otherwise
     this.updateSizes();
 
     const throttledUpdate = this.requestFrame(this.updateSizes);
-    window.addEventListener('resize', throttledUpdate);
+    window.addEventListener('resize', throttledUpdate.bind(this));
 
-    //attach sticky elements at top or bottom
-    //TODO: check if this loop really is needed here or if this could be done somewhere else...
-    for (let i = 0; i < this.wrappers.length; i++) {
-      if ((this.offsets[i] + this.outerHeights[i] - this.windowHeight) < scrollY()) {
-        this.dropStickyBottom(i);
-      } else {
-        this.dropStickyTop(i);
-      }
-    }
+    //add one single scroll EventListener
+    const throttledHandleScroll = this.requestFrame(this.handleScroll);
+    document.addEventListener('scroll', throttledHandleScroll.bind(this), { passive: true });
+
+  }
+
+  updateSizes() {
+    this.setSizes();
+    this.windowHeight = window.innerHeight || document.documentElement.clientHeight;
+    this.windowWidth = window.innerWidth || document.documentElement.clientWidth;
   }
 
   setSizes() {
@@ -73,7 +72,6 @@ class HorizontalScroll {
 
       //wrapperWidth start value will change
       this.wrapperWidths[i] = 0;
-      this.isSticky[i] = false;
 
       //setting the wrapper width to include all items
       //atm it probably need some normalize.css to erase all margins etc...
@@ -88,9 +86,15 @@ class HorizontalScroll {
       this.outerContainers[i].style.height = this.outerHeights[i] + 'px';
       this.outerContainers[i].style.position = 'relative'; //position has to be set relative
 
-      //EventListener for each setup
-      const throttledScrollHandler = this.requestFrame(this.handleScroll);
-      document.addEventListener('scroll', () => throttledScrollHandler(i), { passive: true });
+      this.offsets[i] = this.getOffsetTop(this.outerContainers[i]);
+
+      //attach sticky
+      if ((this.offsets[i] + this.outerHeights[i] - this.windowHeight) < (window.scrollY || window.pageYOffset)) {
+        this.dropStickyBottom(i);
+      } else {
+        this.dropStickyTop(i);
+      }
+
     }
   }
 
@@ -104,46 +108,34 @@ class HorizontalScroll {
     return top;
   }
 
-  getContainerOffsets() {
-    for (let i = 0; i < this.outerContainers.length; i++) {
-      this.offsets[i] = this.getOffsetTop(this.outerContainers[i]);
-    }
-  }
+  handleScroll() {
+    this.scrollY = (window.scrollY || window.pageYOffset);
 
-  updateSizes() {
-    this.setSizes();
-    this.getContainerOffsets();
-    this.windowHeight = window.innerHeight || document.documentElement.clientHeight;
-    this.windowWidth = window.innerWidth || document.documentElement.clientWidth;
-  }
+    for (let i = 0; i < this.wrappers.length; i++) {
+      let top = this.offsets[i] - this.scrollY;
+      let shouldStick = top < 0 && (-1 * top) < this.outerHeights[i] - this.windowHeight;
 
-  handleScroll(i) {
-    let scrollY = window.scrollY || window.pageYOffset;
-    let top = this.offsets[i] - scrollY;
-    let shouldStick = top < 0 && (-1 * top) < this.outerHeights[i] - this.windowHeight;
+      //transform value either not limited or with limits. see this.options.moveInOut
+      let transform = this.options.moveInOut ?
+          (top * this.options.speed) :
+          Math.min(Math.max(
+            parseInt(top * this.options.speed),
+            (this.wrapperWidths[i] - this.windowWidth) * -1), 0);
 
-    //transform value either not limited or with limits. see this.options.moveInOut
-    let transform = this.options.moveInOut ?
-        (top * this.options.speed) :
-        Math.min(Math.max(
-          parseInt(top * this.options.speed),
-          (this.wrapperWidths[i] - this.windowWidth) * -1), 0);
-
-    if (top < this.windowHeight && (-1 * top) < this.outerHeights[i]) {
-      this.wrappers[i].style.transform = 'translate3D(' + transform + 'px, 0, 0)';
-    }
-
-    if (!this.isSticky[i] && shouldStick) {
-      this.makeSticky(i);
-      this.isSticky[i] = true;
-    } else if (this.isSticky[i] && !shouldStick) {
-      if (top < 0) {
-        this.dropStickyBottom(i);
-      } else {
-        this.dropStickyTop(i);
+      if (top < this.windowHeight && (-1 * top) < this.outerHeights[i]) {
+        this.wrappers[i].style.transform = 'translate3D(' + transform + 'px, 0, 0)';
       }
 
-      this.isSticky[i] = false;
+      if (!this.isSticky[i] && shouldStick) {
+        this.makeSticky(i);
+        this.isSticky[i] = true;
+      } else if (this.isSticky[i] && !shouldStick) {
+        if (top < 0) {
+          this.dropStickyBottom(i);
+        } else {
+          this.dropStickyTop(i);
+        }
+      }
     }
 
   }
@@ -160,6 +152,7 @@ class HorizontalScroll {
     this.innerContainers[i].style.top = ''; // erase value
     this.innerContainers[i].style.bottom = ''; // erase value
     this.innerContainers[i].style.width = ''; // erase value
+    this.isSticky[i] = false;
   }
 
   dropStickyBottom(i) {
@@ -167,6 +160,7 @@ class HorizontalScroll {
     this.innerContainers[i].style.top = ''; // erase value
     this.innerContainers[i].style.bottom = '0';
     this.innerContainers[i].style.width = '100%'; // erase value
+    this.isSticky[i] = false;
   }
 
   //helper
